@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rmtcov"
+version = "0.1.0"
+description = "Marchenko-Pastur covariance cleaning vs Ledoit-Wolf for min-variance portfolios"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [{ name = "Hemang" }]
+keywords = ["random-matrix-theory", "marchenko-pastur", "portfolio-optimization", "ledoit-wolf"]
+dependencies = ["numpy>=1.26", "scipy>=1.11"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff"]
+
+[project.scripts]
+rmtcov = "rmtcov.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rmtcov"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
