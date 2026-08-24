@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from rmtcov.backtest import bootstrap_sharpe_diff, factor_model_prices, run_backtest
-from rmtcov.rmt import clean_rmt, mp_support
+from rmtcov.rmt import mp_support
 
 Path("docs").mkdir(exist_ok=True)
 
