@@ -41,8 +41,8 @@ def main() -> None:
             prices = factor_model_prices(n, days, k_factors=k, seed=seed)
             res = run_backtest(prices, window=min(250, days // 3),
                                rebalance_every=21, cost_bps=5.0)
-            for m in per_seed:
-                per_seed[m].append(res[m]["sharpe_net"])
+            for m, vals in per_seed.items():
+                vals.append(res[m]["sharpe_net"])
             rets_by_seed.append({m: np.asarray(res[m]["net_returns"]) for m in per_seed})
             if seed == 0 and name == list(SCENARIOS)[1]:
                 spectra_for_fig = np.linalg.eigvalsh(
