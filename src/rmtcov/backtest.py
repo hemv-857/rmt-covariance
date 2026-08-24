@@ -30,19 +30,29 @@ def run_backtest(
     window: int = 250,
     rebalance_every: int = 21,
     cost_bps: float = 5.0,
+    demean: bool = True,
 ) -> dict[str, dict[str, float]]:
     """Monthly-rebalanced min-variance, three covariance estimators.
 
     Strictly trailing window: estimator at time t uses rows [t-window, t).
-    Returns per-method {ann_return, ann_vol, sharpe, turnover_cost_share}.
+    demean=True subtracts the full-sample per-asset mean log return: with
+    arbitrary panel drift, cross-method Sharpe differences are dominated by
+    drift noise, not by covariance-estimator quality. This leaks the mean
+    (only), which is acceptable for an estimator comparison and is the
+    standard control in the cleaning literature.
     """
-    logp = np.log(prices)
+    R_all = np.diff(np.log(prices), axis=0)  # (T-1, n) daily log returns
+    if demean:
+        # demean RETURNS, not prices: np.diff strips any per-row constant, so
+        # subtracting means from log-prices is a silent no-op.
+        R_all = R_all - R_all.mean(axis=0, keepdims=True)
     methods = {"sample": None, "ledoit_wolf": ledoit_wolf, "rmt_clean": "rmt"}
-    results = {m: {"ret": [], "turnover": [], "w_prev": np.zeros(prices.shape[1])} for m in methods}
+    n_assets = R_all.shape[1]
+    results = {m: {"ret": [], "turnover": [], "w_prev": np.zeros(n_assets)} for m in methods}
     dates: list[int] = []
 
-    for t in range(window, len(prices) - 1, rebalance_every):
-        R = np.diff(logp[t - window : t], axis=0)  # strictly past returns
+    for t in range(window, R_all.shape[0] - 1, rebalance_every):
+        R = R_all[t - window : t]  # strictly past returns
         cov_raw = R.T @ R / (window - 1)
         dates.append(t)
         for name, fn in methods.items():
@@ -54,8 +64,7 @@ def run_backtest(
                 cov = fn(cov_raw)
             w = min_variance_weights(cov)
             # realized return over next rebalance period
-            seg = np.diff(logp[t : t + rebalance_every], axis=0)
-            port = float(np.sum(seg @ w))
+            port = float(R_all[t : t + rebalance_every].sum(axis=0) @ w)
             prev_w = results[name]["w_prev"]
             results[name]["turnover"].append(float(np.abs(w - prev_w).sum()))
             results[name]["w_prev"] = w
@@ -78,7 +87,8 @@ def run_backtest(
                 if net.std(ddof=1) > 0
                 else 0.0
             ),
-            "avg_turnover": float(r["turnover"][0] and np.mean(r["turnover"])),
+            "avg_turnover": float(np.mean(r["turnover"])),
+            "net_returns": net.tolist(),  # per-rebalance net returns for paired tests
         }
     return out
 
