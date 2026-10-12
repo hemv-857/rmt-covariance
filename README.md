@@ -1,5 +1,7 @@
 # rmt-covariance
 
+<a href="https://github.com/hemv-857/rmt-covariance/actions/workflows/ci.yml"><img src="https://github.com/hemv-857/rmt-covariance/actions/workflows/ci.yml/badge.svg" alt="rmt-covariance CI"></a> <a href="https://github.com/hemv-857/rmt-covariance/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a> <img src="https://img.shields.io/badge/Python-3776AB.svg" alt="Python">
+
 Random-matrix-theory cleaning of covariance matrices for minimum-variance
 portfolios: **Marchenko–Pastur eigenvalue clipping** (Laloux–Bouchaud–Potters)
 vs **Ledoit–Wolf shrinkage** vs the raw sample covariance — compared on a
@@ -42,3 +44,7 @@ python -m rmtcov.cli backtest --csv closes.csv --window 250 --cost 5
   (Donoho–Gavish–Johnstone) and factor-targets are the next rungs.
 - Synthetic demo uses a 3-factor DGP so results are diagnostic, not evidence;
   real-data runs via `--csv` are the deliverable.
+
+## License
+
+[LICENSE](https://github.com/hemv-857/rmt-covariance/blob/master/LICENSE) — see the file for the full text.
