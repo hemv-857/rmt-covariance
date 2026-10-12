@@ -45,6 +45,10 @@ python -m rmtcov.cli backtest --csv closes.csv --window 250 --cost 5
 - Synthetic demo uses a 3-factor DGP so results are diagnostic, not evidence;
   real-data runs via `--csv` are the deliverable.
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## License
 
 [LICENSE](https://github.com/hemv-857/rmt-covariance/blob/master/LICENSE) — see the file for the full text.
